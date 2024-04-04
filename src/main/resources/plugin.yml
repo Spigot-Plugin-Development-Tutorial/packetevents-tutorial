@@ -1,0 +1,6 @@
+name: packets-with-packet-events
+version: '${project.version}'
+main: me.kodysimpson.packetswithpacketevents.Packets_with_packet_events
+api-version: '1.20'
+depend:
+  - packetevents

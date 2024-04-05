@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTimeUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateHealth;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -75,14 +76,14 @@ public class AnimalHurtListener implements PacketListener {
     @Override
     public void onPacketSend(PacketSendEvent event) {
 
-        //Intercept any update time packets so that we can cancel them
-        //This will prevent the time from updating for the player. :)
-
         if (event.getPacketType() == PacketType.Play.Server.TIME_UPDATE){
 
-            System.out.println("Time Update Packet Intercepted!");
+            System.out.println("Time update packet intercepted!");
 
-            event.setCancelled(true);
+            WrapperPlayServerTimeUpdate packet = new WrapperPlayServerTimeUpdate(event);
+            packet.setTimeOfDay(0L);
+
+            //event.setCancelled(true);
         }
 
 

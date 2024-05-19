@@ -2,6 +2,8 @@ package me.kodysimpson.packetswithpacketevents.listeners;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
+import me.kodysimpson.packetswithpacketevents.Packets_with_packet_events;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -12,16 +14,20 @@ public class VillageLookListener implements Listener {
 
     @EventHandler
     public void onPlayerMovement(PlayerMoveEvent e) {
-
         //when the player moves within 5 blocks of a villager, make the villager look at the player
         e.getPlayer().getNearbyEntities(5, 5, 5).stream()
                 .filter(entity -> entity instanceof Villager)
                 .forEach(entity -> {
                     float yaw = calculateYawToFacePlayer(entity.getLocation(), e.getPlayer().getLocation());
-                    WrapperPlayServerEntityHeadLook packet = new WrapperPlayServerEntityHeadLook(entity.getEntityId(), yaw);
+                    //Generally a good practice to send packets asynchronously .
+                    //Hint: We are in a bukkit event, most events are not triggered async.
+                    Bukkit.getScheduler().runTaskAsynchronously(Packets_with_packet_events.getInstance(), () -> {
+                        WrapperPlayServerEntityHeadLook packet = new WrapperPlayServerEntityHeadLook(entity.getEntityId(), yaw);
 
-                    //send it to this player only so the villager looks at them specifically
-                    PacketEvents.getAPI().getPlayerManager().sendPacket(e.getPlayer(), packet);
+                        //send it to this player only so the villager looks at them specifically
+                        PacketEvents.getAPI().getPlayerManager().sendPacket(e.getPlayer(), packet);
+                    });
+
                 });
 
     }

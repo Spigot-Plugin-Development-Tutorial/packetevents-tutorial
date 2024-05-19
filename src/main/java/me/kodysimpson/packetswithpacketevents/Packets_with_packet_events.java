@@ -11,12 +11,16 @@ public final class Packets_with_packet_events extends JavaPlugin {
 
     //JavaDocs: https://packetevents.github.io/javadocs/
 
+    private static Packets_with_packet_events INSTANCE;
+
     @Override
     public void onLoad() {
+        INSTANCE = this;
         //we are using spigot
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         //configure the settings
-        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
+        //reEncodeByDefault = allow modification of packets in your listeners by default.
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(true)
                 .checkForUpdates(true)
                 .bStats(false);
         PacketEvents.getAPI().load();
@@ -35,5 +39,9 @@ public final class Packets_with_packet_events extends JavaPlugin {
     @Override
     public void onDisable() {
         PacketEvents.getAPI().terminate();
+    }
+
+    public static Packets_with_packet_events getInstance() {
+        return INSTANCE;
     }
 }
